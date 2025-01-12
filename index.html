@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Quiz Game</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Math Quiz Game</h1>
+            <p>Test your math skills by solving random problems!</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="game-area" class="game-area">
+            <div id="math-problem">-</div>
+
+            <input type="number" id="answer-input" placeholder="Enter your answer" />
+            <button id="submit-button">Submit</button>
+
+            <div id="feedback">
+                <p id="feedback-message">Solve the problem above as quickly as you can!</p>
+            </div>
+
+            <div id="stats">
+                <p>Time Remaining: <span id="timer">60</span> seconds</p>
+                <p>Score: <span id="score">0</span></p>
+            </div>
+
+            <button id="restart-button">Restart</button>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Math Quiz Game. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let timeRemaining = 60;
+        let score = 0;
+        let timerInterval;
+        let correctAnswer;
+
+        const mathProblemElement = document.getElementById("math-problem");
+        const answerInputElement = document.getElementById("answer-input");
+        const feedbackMessage = document.getElementById("feedback-message");
+        const timerDisplay = document.getElementById("timer");
+        const scoreDisplay = document.getElementById("score");
+        const restartButton = document.getElementById("restart-button");
+        const submitButton = document.getElementById("submit-button");
+
+        function startGame() {
+            timeRemaining = 60;
+            score = 0;
+            feedbackMessage.textContent = "Solve the problem above as quickly as you can!";
+            timerDisplay.textContent = timeRemaining;
+            scoreDisplay.textContent = score;
+            answerInputElement.disabled = false;
+            submitButton.disabled = false;
+            answerInputElement.value = "";
+            generateProblem();
+            startTimer();
+        }
+
+        function generateProblem() {
+            const num1 = Math.floor(Math.random() * 20) + 1;
+            const num2 = Math.floor(Math.random() * 20) + 1;
+            const operators = ["+", "-", "*"];
+            const operator = operators[Math.floor(Math.random() * operators.length)];
+
+            mathProblemElement.textContent = `${num1} ${operator} ${num2}`;
+            correctAnswer = eval(`${num1} ${operator} ${num2}`);
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                timerDisplay.textContent = timeRemaining;
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    answerInputElement.disabled = true;
+                    submitButton.disabled = true;
+                    feedbackMessage.textContent = `Time's up! Your final score is ${score}.`;
+                }
+            }, 1000);
+        }
+
+        submitButton.addEventListener("click", () => {
+            const playerAnswer = parseFloat(answerInputElement.value);
+
+            if (playerAnswer === correctAnswer) {
+                score++;
+                scoreDisplay.textContent = score;
+                feedbackMessage.textContent = "Correct!";
+                generateProblem();
+            } else {
+                feedbackMessage.textContent = "Incorrect. Try again!";
+            }
+
+            answerInputElement.value = "";
+        });
+
+        restartButton.addEventListener("click", startGame);
+
+        startGame();
+    </script>
+</body>
+</html>
